@@ -8,14 +8,13 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     @media print {
-      body * { visibility: hidden; }
-      #seccion-impresion, #seccion-impresion * { visibility: visible; }
-      #seccion-impresion { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
-      .no-print { display: none !important; }
+      body * { visibility: hidden !important; }
+      #seccion-impresion, #seccion-impresion * { visibility: visible !important; }
+      #seccion-impresion { position: fixed !important; left: 0 !important; top: 0 !important; width: 100% !important; background: white !important; z-index: 99999 !important; }
     }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-4 font-sans no-print">
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 font-sans">
 
   <!-- Encabezado -->
   <header class="max-w-md mx-auto flex justify-between items-center pb-4 border-b border-slate-700 mb-6">
@@ -106,8 +105,8 @@
     </div>
   </div>
 
-  <!-- SECCIÓN OCULTA PARA IMPRESIÓN NATIVA -->
-  <div id="seccion-impresion" class="hidden p-4 bg-white text-black font-sans"></div>
+  <!-- SECCIÓN PARA IMPRESIÓN FORZADA -->
+  <div id="seccion-impresion" style="display:none;"></div>
 
   <script>
     let tipoActual = 'Celular';
@@ -185,41 +184,45 @@
 
       if(formato === 'carta') {
         sec.innerHTML = `
-          <div style="font-family: Arial, sans-serif; padding: 20px; color: black; background: white;">
-            <h2 style="margin:0; font-size: 18px; color: #000;">COMPROBANTE DE SERVICIO TÉCNICO</h2>
-            <p style="font-size: 12px; color: #333;"><strong>Orden:</strong> ${ordenActiva.id} | <strong>Fecha:</strong> ${ordenActiva.fecha}</p>
-            <hr style="border: 1px solid #ccc;">
-            <h4 style="margin: 5px 0; font-size: 14px; color: #000;">Datos del Cliente</h4>
-            <p style="font-size: 12px; margin: 2px 0; color: #333;"><strong>Nombre:</strong> ${ordenActiva.cliente.nombre} | <strong>CI/RIF:</strong> ${ordenActiva.cliente.id}</p>
-            <p style="font-size: 12px; margin: 2px 0; color: #333;"><strong>Teléfono:</strong> ${ordenActiva.cliente.tel}</p>
-            <hr style="border: 1px solid #ccc;">
-            <h4 style="margin: 5px 0; font-size: 14px; color: #000;">Datos del Equipo</h4>
-            <p style="font-size: 12px; margin: 2px 0; color: #333;"><strong>Equipo:</strong> ${ordenActiva.equipo.tipo} - ${ordenActiva.equipo.modelo}</p>
-            <p style="font-size: 12px; margin: 2px 0; color: #333;"><strong>Clave:</strong> ${ordenActiva.equipo.clave}</p>
-            <p style="font-size: 12px; margin: 2px 0; color: #333;"><strong>Falla:</strong> ${ordenActiva.equipo.falla}</p>
-            <p style="font-size: 12px; margin: 2px 0; color: #333;"><strong>Observaciones:</strong> ${ordenActiva.equipo.obs}</p>
-            <hr style="border: 1px solid #ccc;">
-            <p style="font-size: 12px; color: #333;"><strong>Total Estimado:</strong> $${ordenActiva.costos.total}</p>
-            <p style="font-size: 12px; color: #333;"><strong>Abono:</strong> $${ordenActiva.costos.abono}</p>
-            <br><br>
-            <p style="text-align:center; font-size: 12px; color: #333;">_______________________<br>Firma del Cliente</p>
+          <div style="font-family: Arial, sans-serif; padding: 30px; color: #000; background: #fff; width: 100%; box-sizing: border-box;">
+            <h2 style="margin:0; font-size: 20px; color: #000; border-bottom: 2px solid #000; padding-bottom: 8px;">COMPROBANTE DE SERVICIO TÉCNICO</h2>
+            <p style="font-size: 14px; color: #333; margin-top: 10px;"><strong>Orden:</strong> ${ordenActiva.id} &nbsp;|&nbsp; <strong>Fecha:</strong> ${ordenActiva.fecha}</p>
+            
+            <h4 style="margin: 15px 0 5px 0; font-size: 15px; color: #000; background: #eee; padding: 5px;">Datos del Cliente</h4>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Nombre:</strong> ${ordenActiva.cliente.nombre}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>CI / RIF:</strong> ${ordenActiva.cliente.id}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Teléfono:</strong> ${ordenActiva.cliente.tel}</p>
+
+            <h4 style="margin: 15px 0 5px 0; font-size: 15px; color: #000; background: #eee; padding: 5px;">Datos del Equipo</h4>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Equipo:</strong> ${ordenActiva.equipo.tipo} - ${ordenActiva.equipo.modelo}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Clave de Acceso:</strong> ${ordenActiva.equipo.clave}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Falla Reportada:</strong> ${ordenActiva.equipo.falla}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Observaciones:</strong> ${ordenActiva.equipo.obs}</p>
+
+            <h4 style="margin: 15px 0 5px 0; font-size: 15px; color: #000; background: #eee; padding: 5px;">Presupuesto</h4>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Total Estimado:</strong> $${ordenActiva.costos.total}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Abono Realizado:</strong> $${ordenActiva.costos.abono}</p>
+            <p style="font-size: 14px; margin: 4px 0; color: #333;"><strong>Restante a Pagar:</strong> $${(ordenActiva.costos.total - ordenActiva.costos.abono).toFixed(2)}</p>
+            
+            <br><br><br>
+            <p style="text-align:center; font-size: 14px; color: #333;">________________________________________<br>Firma de Conformidad del Cliente</p>
           </div>
         `;
       } else {
         sec.innerHTML = `
-          <div style="font-family: monospace; width: 280px; font-size: 12px; color: black; background: white; padding: 10px;">
+          <div style="font-family: monospace; width: 300px; font-size: 13px; color: #000; background: #fff; padding: 15px;">
             <p style="text-align:center; margin:0;"><strong>SERVICIO TÉCNICO</strong><br>${ordenActiva.id}<br>${ordenActiva.fecha}</p>
-            --------------------------------<br>
+            ------------------------------------------<br>
             Cliente: ${ordenActiva.cliente.nombre}<br>
             Tel: ${ordenActiva.cliente.tel}<br>
-            --------------------------------<br>
+            ------------------------------------------<br>
             Equipo: ${ordenActiva.equipo.tipo} ${ordenActiva.equipo.modelo}<br>
             Clave: ${ordenActiva.equipo.clave}<br>
             Falla: ${ordenActiva.equipo.falla}<br>
-            --------------------------------<br>
+            ------------------------------------------<br>
             Total: $${ordenActiva.costos.total}<br>
             Abono: $${ordenActiva.costos.abono}<br>
-            --------------------------------<br>
+            ------------------------------------------<br>
             <br><p style="text-align:center;">Firma: _________________</p>
           </div>
         `;

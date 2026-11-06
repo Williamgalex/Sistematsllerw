@@ -29,7 +29,7 @@
   <main class="max-w-md mx-auto">
     <!-- VISTA FORMULARIO -->
     <div id="vista-formulario" class="space-y-4">
-      <form id="form-recepcion" class="space-y-4">
+      <form id="form-recepcion" onsubmit="guardarOrden(event)" class="space-y-4">
         
         <!-- Cliente -->
         <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-3">
@@ -70,19 +70,19 @@
             <label class="text-xs text-slate-400 block mb-2">Método(s) de Pago del Abono:</label>
             <div class="grid grid-cols-2 gap-2 text-xs">
               <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago" value="Efectivo ($)" class="rounded text-blue-600"> Efectivo ($)
+                <input type="checkbox" name="pago_opcion" value="Efectivo ($)" class="rounded text-blue-600"> Efectivo ($)
               </label>
               <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago" value="Bolívares" class="rounded text-blue-600"> Bolívares
+                <input type="checkbox" name="pago_opcion" value="Bolívares" class="rounded text-blue-600"> Bolívares
               </label>
               <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago" value="Punto de Venta" class="rounded text-blue-600"> Punto de Venta
+                <input type="checkbox" name="pago_opcion" value="Punto de Venta" class="rounded text-blue-600"> Punto de Venta
               </label>
               <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago" value="Pago Móvil" class="rounded text-blue-600"> Pago Móvil
+                <input type="checkbox" name="pago_opcion" value="Pago Móvil" class="rounded text-blue-600"> Pago Móvil
               </label>
               <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer col-span-2">
-                <input type="checkbox" name="pago" value="Binance" class="rounded text-blue-600"> Binance
+                <input type="checkbox" name="pago_opcion" value="Binance" class="rounded text-blue-600"> Binance
               </label>
             </div>
           </div>
@@ -143,11 +143,15 @@
       event.target.classList.remove('bg-slate-700', 'text-slate-300');
     }
 
-    document.getElementById('form-recepcion').addEventListener('submit', (e) => {
+    function guardarOrden(e) {
       e.preventDefault();
       
-      // Recolectar métodos de pago seleccionados
-      const pagosSeleccionados = Array.from(document.querySelectorAll('input[name="pago"]:checked')).map(cb => cb.value);
+      // Recolectar métodos de pago seleccionados de forma segura
+      const checkboxes = document.querySelectorAll('input[name="pago_opcion"]:checked');
+      let pagosSeleccionados = [];
+      checkboxes.forEach(cb => {
+        pagosSeleccionados.push(cb.value);
+      });
 
       const num = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
       ordenActiva = {
@@ -168,7 +172,7 @@
         costos: {
           total: parseFloat(document.getElementById('monto-total').value || 0).toFixed(2),
           abono: parseFloat(document.getElementById('monto-abono').value || 0).toFixed(2),
-          pagos: pagosSeleccionados.length > 0 ? pagosSeleccionados.join(', ') : 'Ninguno'
+          pagos: pagosSeleccionados.length > 0 ? pagosSeleccionados.join(', ') : 'No especificado'
         }
       };
 
@@ -178,7 +182,7 @@
 
       document.getElementById('txt-num-orden').innerText = `Folio: ${ordenActiva.id}`;
       document.getElementById('modal-acciones').classList.remove('hidden');
-    });
+    }
 
     function actualizarContador() {
       document.getElementById('cant-ordenes').innerText = ordenes.length;
@@ -190,9 +194,10 @@
       if(tel.startsWith('0')) tel = '58' + tel.substring(1);
       
       const texto = `*GALEX IMPORT - SERVICIO TÉCNICO*\n` +
-                    `*Orden:* ${ordenActiva.id}\n` + `*Cliente:* ${ordenActiva.cliente.nombre}\n` +
+                    `*Orden:* ${ordenActiva.id}\n` +
+                    `*Cliente:* ${ordenActiva.cliente.nombre}\n` +
                     `*Servicio:* ${ordenActiva.equipo.servicio} (${ordenActiva.equipo.modelo})\n` +
-                    `*Total:* $${ordenActiva.costos.total} \vert{} *Abono:*$${ordenActiva.costos.abono}\n` +
+                    `*Total:* $${ordenActiva.costos.total} | *Abono:* $${ordenActiva.costos.abono}\n` +
                     `*Método de Pago:* ${ordenActiva.costos.pagos}`;
 
       window.open(`https://wa.me/${tel}?text=${encodeURIComponent(texto)}`, '_blank');
@@ -238,7 +243,7 @@
               <td colspan="2" style="padding: 3px 0;"><strong>Observación:</strong> ${ordenActiva.equipo.obs}</td>
             </tr>
             <tr>
-              <td colspan="2" style="padding: 3px 0;"><strong>Monto Total:</strong> $${ordenActiva.costos.total} &nbsp;\vert{}&nbsp; <strong>Abono:</strong>$${ordenActiva.costos.abono}</td>
+              <td colspan="2" style="padding: 3px 0;"><strong>Monto Total:</strong> $${ordenActiva.costos.total} &nbsp;|&nbsp; <strong>Abono:</strong> $${ordenActiva.costos.abono}</td>
             </tr>
             <tr>
               <td colspan="2" style="padding: 4px 0;"><strong>Método de Pago:</strong> ${ordenActiva.costos.pagos}</td>
@@ -277,4 +282,56 @@
                 <div style="border: 1px solid #000; width: 110px; height: 110px; margin: 0 auto; display: flex; flex-direction: column; justify-content: space-around; align-items: center; padding: 5px;">
                   <div style="display:flex; gap:12px;"><span style="font-size:14px;">•</span><span style="font-size:14px;">•</span><span style="font-size:14px;">•</span></div>
                   <div style="display:flex; gap:12px;"><span style="font-size:14px;">•</span><span style="font-size:14px;">•</span><span style="font-size:14px;">•</span></div>
-                  <div style="display:flex; gap:12px;"><span style="font-size:14px;">•</span><span style="font-size:14px;">
+                  <div style="display:flex; gap:12px;"><span style="font-size:14px;">•</span><span style="font-size:14px;">•</span><span style="font-size:14px;">•</span></div>
+                </div>
+                <p style="margin: 5px 0 0 0; font-size: 10px;">Huella derecha</p>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      `;
+
+      window.print();
+      sec.style.display = 'none';
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-acciones').classList.add('hidden');
+      document.getElementById('form-recepcion').reset();
+    }
+
+    function verLista() {
+      document.getElementById('vista-formulario').classList.add('hidden');
+      document.getElementById('vista-lista').classList.remove('hidden');
+      
+      const cont = document.getElementById('contenedor-ordenes');
+      cont.innerHTML = '';
+
+      if(ordenes.length === 0) {
+        cont.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">No hay órdenes registradas.</p>';
+        return;
+      }
+
+      ordenes.forEach(o => {
+        cont.innerHTML += `
+          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 text-xs space-y-1">
+            <div class="flex justify-between text-blue-400 font-bold">
+              <span>${o.id}</span>
+              <span>${o.fecha}</span>
+            </div>
+            <p class="text-slate-200"><strong>${o.cliente.nombre}</strong> (${o.equipo.modelo})</p>
+            <p class="text-slate-400">Servicio: ${o.equipo.servicio} | Pago: ${o.costos.pagos}</p>
+          </div>
+        `;
+      });
+    }
+
+    function verFormulario() {
+      document.getElementById('vista-lista').classList.add('hidden');
+      document.getElementById('vista-formulario').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
+s

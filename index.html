@@ -29,14 +29,14 @@
   <main class="max-w-md mx-auto">
     <!-- VISTA FORMULARIO -->
     <div id="vista-formulario" class="space-y-4">
-      <form id="form-recepcion" onsubmit="guardarOrden(event)" class="space-y-4">
+      <div class="space-y-4">
         
         <!-- Cliente -->
         <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-3">
           <h2 class="text-sm font-semibold text-blue-400">1. Datos del Cliente</h2>
-          <input type="text" id="cli-id" placeholder="Cédula / RIF" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
-          <input type="text" id="cli-nombre" placeholder="Nombre y Apellido" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
-          <input type="tel" id="cli-tel" placeholder="Teléfono (Ej: 04121234567)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+          <input type="text" id="cli-id" placeholder="Cédula / RIF" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+          <input type="text" id="cli-nombre" placeholder="Nombre y Apellido" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+          <input type="tel" id="cli-tel" placeholder="Teléfono (Ej: 04121234567)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
         </div>
 
         <!-- Equipo -->
@@ -52,46 +52,25 @@
             <button type="button" onclick="setTipo('Otro')" class="btn-t bg-slate-700 text-slate-300 p-2 rounded-xl text-xs font-bold">Otro</button>
           </div>
 
-          <input type="text" id="eq-modelo" placeholder="Marca y Modelo (Ej: Infinix Hot)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
-          <input type="text" id="eq-servicio" placeholder="Servicio a realizar (Ej: Cambio de pantalla)" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+          <input type="text" id="eq-modelo" placeholder="Marca y Modelo (Ej: Infinix Hot)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+          <input type="text" id="eq-servicio" placeholder="Servicio a realizar (Ej: Cambio de pantalla)" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
           <input type="text" id="eq-clave" placeholder="Clave / Patrón de Desbloqueo" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
           <textarea id="eq-obs" placeholder="Observaciones físicas / Rayones..." rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm"></textarea>
         </div>
 
-        <!-- Cobro y Métodos de Pago -->
+        <!-- Cobro -->
         <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700 space-y-3">
-          <h2 class="text-sm font-semibold text-blue-400">3. Presupuesto y Métodos de Pago</h2>
+          <h2 class="text-sm font-semibold text-blue-400">3. Presupuesto</h2>
           <div class="grid grid-cols-2 gap-2">
             <input type="number" id="monto-total" step="0.01" placeholder="Monto Total ($)" class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
             <input type="number" id="monto-abono" step="0.01" placeholder="Abono ($)" class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
           </div>
-
-          <div class="pt-2">
-            <label class="text-xs text-slate-400 block mb-2">Método(s) de Pago del Abono:</label>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago_opcion" value="Efectivo ($)" class="rounded text-blue-600"> Efectivo ($)
-              </label>
-              <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago_opcion" value="Bolívares" class="rounded text-blue-600"> Bolívares
-              </label>
-              <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago_opcion" value="Punto de Venta" class="rounded text-blue-600"> Punto de Venta
-              </label>
-              <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer">
-                <input type="checkbox" name="pago_opcion" value="Pago Móvil" class="rounded text-blue-600"> Pago Móvil
-              </label>
-              <label class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700 cursor-pointer col-span-2">
-                <input type="checkbox" name="pago_opcion" value="Binance" class="rounded text-blue-600"> Binance
-              </label>
-            </div>
-          </div>
         </div>
 
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-blue-600/30">
+        <button type="button" onclick="guardarOrden()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl text-base shadow-lg shadow-blue-600/30">
           Guardar y Generar Orden
         </button>
-      </form>
+      </div>
     </div>
 
     <!-- VISTA LISTA DE ÓRDENES -->
@@ -143,36 +122,26 @@
       event.target.classList.remove('bg-slate-700', 'text-slate-300');
     }
 
-    function guardarOrden(e) {
-      e.preventDefault();
-      
-      // Recolectar métodos de pago seleccionados de forma segura
-      const checkboxes = document.querySelectorAll('input[name="pago_opcion"]:checked');
-      let pagosSeleccionados = [];
-      checkboxes.forEach(cb => {
-        pagosSeleccionados.push(cb.value);
-      });
-
+    function guardarOrden() {
       const num = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
       ordenActiva = {
         id: num,
         fecha: new Date().toLocaleDateString(),
         cliente: {
-          id: document.getElementById('cli-id').value,
-          nombre: document.getElementById('cli-nombre').value,
-          tel: document.getElementById('cli-tel').value
+          id: document.getElementById('cli-id').value || 'S/N',
+          nombre: document.getElementById('cli-nombre').value || 'Cliente',
+          tel: document.getElementById('cli-tel').value || 'S/N'
         },
         equipo: {
           tipo: tipoActual,
-          modelo: document.getElementById('eq-modelo').value,
-          servicio: document.getElementById('eq-servicio').value,
+          modelo: document.getElementById('eq-modelo').value || 'Genérico',
+          servicio: document.getElementById('eq-servicio').value || 'Revisión',
           clave: document.getElementById('eq-clave').value || 'N/A',
           obs: document.getElementById('eq-obs').value || 'Ninguna'
         },
         costos: {
           total: parseFloat(document.getElementById('monto-total').value || 0).toFixed(2),
-          abono: parseFloat(document.getElementById('monto-abono').value || 0).toFixed(2),
-          pagos: pagosSeleccionados.length > 0 ? pagosSeleccionados.join(', ') : 'No especificado'
+          abono: parseFloat(document.getElementById('monto-abono').value || 0).toFixed(2)
         }
       };
 
@@ -197,8 +166,7 @@
                     `*Orden:* ${ordenActiva.id}\n` +
                     `*Cliente:* ${ordenActiva.cliente.nombre}\n` +
                     `*Servicio:* ${ordenActiva.equipo.servicio} (${ordenActiva.equipo.modelo})\n` +
-                    `*Total:* $${ordenActiva.costos.total} | *Abono:* $${ordenActiva.costos.abono}\n` +
-                    `*Método de Pago:* ${ordenActiva.costos.pagos}`;
+                    `*Total:* $${ordenActiva.costos.total} | *Abono:* $${ordenActiva.costos.abono}`;
 
       window.open(`https://wa.me/${tel}?text=${encodeURIComponent(texto)}`, '_blank');
     }
@@ -243,10 +211,17 @@
               <td colspan="2" style="padding: 3px 0;"><strong>Observación:</strong> ${ordenActiva.equipo.obs}</td>
             </tr>
             <tr>
-              <td colspan="2" style="padding: 3px 0;"><strong>Monto Total:</strong> $${ordenActiva.costos.total} &nbsp;|&nbsp; <strong>Abono:</strong> $${ordenActiva.costos.abono}</td>
+              <td colspan="2" style="padding: 5px 0;">
+                <strong>Método de Pago:</strong> 
+                [&nbsp;&nbsp;] Efectivo &nbsp;&nbsp; 
+                [&nbsp;&nbsp;] Bolívares &nbsp;&nbsp; 
+                [&nbsp;&nbsp;] Punto de Venta &nbsp;&nbsp; 
+                [&nbsp;&nbsp;] Pago Móvil &nbsp;&nbsp; 
+                [&nbsp;&nbsp;] Binance
+              </td>
             </tr>
             <tr>
-              <td colspan="2" style="padding: 4px 0;"><strong>Método de Pago:</strong> ${ordenActiva.costos.pagos}</td>
+              <td colspan="2" style="padding: 3px 0;"><strong>Monto:</strong> Total: $${ordenActiva.costos.total} | Abono: $${ordenActiva.costos.abono}</td>
             </tr>
           </table>
 
@@ -298,7 +273,15 @@
 
     function cerrarModal() {
       document.getElementById('modal-acciones').classList.add('hidden');
-      document.getElementById('form-recepcion').reset();
+      document.getElementById('cli-id').value = '';
+      document.getElementById('cli-nombre').value = '';
+      document.getElementById('cli-tel').value = '';
+      document.getElementById('eq-modelo').value = '';
+      document.getElementById('eq-servicio').value = '';
+      document.getElementById('eq-clave').value = '';
+      document.getElementById('eq-obs').value = '';
+      document.getElementById('monto-total').value = '';
+      document.getElementById('monto-abono').value = '';
     }
 
     function verLista() {
@@ -321,7 +304,7 @@
               <span>${o.fecha}</span>
             </div>
             <p class="text-slate-200"><strong>${o.cliente.nombre}</strong> (${o.equipo.modelo})</p>
-            <p class="text-slate-400">Servicio: ${o.equipo.servicio} | Pago: ${o.costos.pagos}</p>
+            <p class="text-slate-400">Servicio: ${o.equipo.servicio}</p>
           </div>
         `;
       });
@@ -334,4 +317,3 @@
   </script>
 </body>
 </html>
-s
